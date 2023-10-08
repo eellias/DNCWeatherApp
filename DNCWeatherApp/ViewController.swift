@@ -13,16 +13,22 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        fetchCurrentResult()
+        fetchForecastResult()
     }
+    
+    // MARK: - Fetching functions
 
     func fetchCurrentResult() {
-        let apiService = APIService(urlString: "http://api.weatherapi.com/v1/current.json?key=82bb773b94314901a2d152250230510&q=London")
+        let apiService = APIService(urlString: "http://api.weatherapi.com/v1/current.json?q=London")
         
         apiService.getJSON { (result: Result<CurrentResult, APIError>) in
             switch result {
             case .success(let currentResult):
                 DispatchQueue.main.async {
                     self.currentResult = currentResult
+                    print(self.currentResult)
+                    print("\n\n\n\n")
                 }
             case .failure(let error):
                 #warning("Add error handling and remove print")
@@ -32,13 +38,14 @@ class ViewController: UIViewController {
     }
     
     func fetchForecastResult() {
-        let apiService = APIService(urlString: "http://api.weatherapi.com/v1/forecast.json?key=82bb773b94314901a2d152250230510&q=Kharkiv&days=3")
+        let apiService = APIService(urlString: "http://api.weatherapi.com/v1/forecast.json?q=Kharkiv&days=3")
         
         apiService.getJSON { (result: Result<ForecastResult, APIError>) in
             switch result {
             case .success(let forecastResult):
                 DispatchQueue.main.async {
                     self.forecastResult = forecastResult
+                    print(self.forecastResult)
                 }
             case .failure(let error):
                 #warning("Add error handling and remove print")
