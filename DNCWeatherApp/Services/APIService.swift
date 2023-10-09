@@ -9,17 +9,15 @@ import Foundation
 import Alamofire
 import Security
 
-struct APIService {
-    let urlString: String
+class APIService {
+    public static let shared = APIService()
     private let apiKey = "82bb773b94314901a2d152250230510"
     
-    init(urlString: String) {
-        self.urlString = urlString
-        
+    init() {
         saveAPIKey(apiKey: apiKey)
     }
     
-    // MARK: - Functions for API key saving and reading from Keychain
+    // MARK: - Functions for saving and reading API key from Keychain
     
     func saveAPIKey(apiKey: String) {
         let keychainQuery: [String: Any] = [
@@ -27,6 +25,12 @@ struct APIService {
             kSecAttrService as String: "WeatherAppAPIKey",
             kSecValueData as String: apiKey.data(using: .utf8)!
         ]
+        
+        let status = SecItemAdd(keychainQuery as CFDictionary, nil)
+
+        if status != errSecSuccess {
+            print("API key saving error: \(status)")
+        }
     }
 
     func readAPIKey() -> String? {
@@ -67,9 +71,9 @@ struct APIService {
 
     // MARK: - URL getting function
     
-    func getURL() -> String {
+    func getURL(_ url: String) -> String {
         if let savedAPIKey = readAPIKey() {
-            return "\(self.urlString)&key=\(savedAPIKey)&lang=\(getCurrentLanguage())"
+            return "\(url)&key=\(savedAPIKey)&lang=\(getCurrentLanguage())"
         } else {
             return ""
         }
@@ -77,10 +81,11 @@ struct APIService {
     
     // MARK: - API request & JSON parsing function
     
-    func getJSON<T: Decodable>(dateDecodingStrategy: JSONDecoder.DateDecodingStrategy = .deferredToDate,
+    func getJSON<T: Decodable>(urlString: String,
+                               dateDecodingStrategy: JSONDecoder.DateDecodingStrategy = .deferredToDate,
                                keyDecodingStrategy: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys,
                                completion: @escaping (Result<T, APIError>) -> Void) {
-        guard let url = URL(string: getURL()) else {
+        guard let url = URL(string: getURL(urlString)) else {
             completion(.failure(.invalidURL))
             return
         }

@@ -6,29 +6,34 @@
 //
 
 import UIKit
+import CoreLocation
 
 class ViewController: UIViewController {
     var currentResult: CurrentResult?
     var forecastResult: ForecastResult?
+    let apiService = APIService.shared
+    
+    let locationManager = CLLocationManager()
+    
+    var currentLocation: CLLocation?
+    
+    var lat: String = ""
+    var lon: String = ""
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        fetchCurrentResult()
-        fetchForecastResult()
+        setupLocation()
     }
     
     // MARK: - Fetching functions
 
     func fetchCurrentResult() {
-        let apiService = APIService(urlString: "http://api.weatherapi.com/v1/current.json?q=London")
         
-        apiService.getJSON { (result: Result<CurrentResult, APIError>) in
+        apiService.getJSON(urlString: "http://api.weatherapi.com/v1/current.json?q=\(lat),\(lon)") { (result: Result<CurrentResult, APIError>) in
             switch result {
             case .success(let currentResult):
                 DispatchQueue.main.async {
                     self.currentResult = currentResult
-                    print(self.currentResult)
-                    print("\n\n\n\n")
                 }
             case .failure(let error):
                 #warning("Add error handling and remove print")
@@ -38,14 +43,12 @@ class ViewController: UIViewController {
     }
     
     func fetchForecastResult() {
-        let apiService = APIService(urlString: "http://api.weatherapi.com/v1/forecast.json?q=Kharkiv&days=3")
         
-        apiService.getJSON { (result: Result<ForecastResult, APIError>) in
+        apiService.getJSON(urlString: "http://api.weatherapi.com/v1/forecast.json?q=\(lat),\(lon)&days=3") { (result: Result<ForecastResult, APIError>) in
             switch result {
             case .success(let forecastResult):
                 DispatchQueue.main.async {
                     self.forecastResult = forecastResult
-                    print(self.forecastResult)
                 }
             case .failure(let error):
                 #warning("Add error handling and remove print")
@@ -55,3 +58,30 @@ class ViewController: UIViewController {
     }
 }
 
+// MARK: - Extension of VC for Location
+
+extension ViewController: CLLocationManagerDelegate {
+    func setupLocation() {
+        locationManager.delegate = self
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.startUpdatingLocation()
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if !locations.isEmpty, currentLocation == nil {
+            currentLocation = locations.first
+            locationManager.stopUpdatingLocation()
+            requestWeatherForLocation()
+        }
+    }
+    
+    func requestWeatherForLocation() {
+        guard let currentLocation = currentLocation else { return }
+        
+        lon = String(currentLocation.coordinate.longitude)
+        lat = String(currentLocation.coordinate.latitude)
+        
+        fetchCurrentResult()
+        fetchForecastResult()
+    }
+}

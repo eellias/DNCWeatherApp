@@ -17,9 +17,9 @@ enum APIError: Error, LocalizedError {
         case .invalidURL:
             return NSLocalizedString("The endpoint URL is invalid.", comment: "")
         case .dataTaskError(let string):
-            return string
+            return NSLocalizedString(string, comment: "")
         case .decodingError(let string):
-            return string
+            return NSLocalizedString(string, comment: "")
         }
     }
 }
