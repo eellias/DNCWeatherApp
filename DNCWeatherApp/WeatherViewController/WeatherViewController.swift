@@ -63,24 +63,42 @@ class WeatherViewController: UIViewController {
     func fetchForecastResult() async {
         
         do {
-            let forecastResult: ForecastResult = try await apiService.getJSON(urlString: "http://api.weatherapi.com/v1/forecast.json?q=\(lat),\(lon)&days=14")
-            let currentResult: CurrentResult = try await apiService.getJSON(urlString: "http://api.weatherapi.com/v1/current.json?q=\(lat),\(lon)")
-            let currentLocation = CurrentLocation(current: currentResult.current, location: currentResult.location)
+            async let forecastResult: ForecastResult = try await apiService.getJSON(urlString: "http://api.weatherapi.com/v1/forecast.json?q=\(lat),\(lon)&days=14")
+            async let currentResult: CurrentResult = try await apiService.getJSON(urlString: "http://api.weatherapi.com/v1/current.json?q=\(lat),\(lon)")
+            let currentLocation = await CurrentLocation(current: try currentResult.current, location: try currentResult.location)
             self.current = .current(currentLocation)
-            self.hourly = .hourly(forecastResult.forecast.forecastday[0].hour)
-            self.forecast = .forecast(forecastResult.forecast.forecastday)
+            self.hourly = await .hourly(try forecastResult.forecast.forecastday[0].hour)
+            self.forecast = await .forecast(try forecastResult.forecast.forecastday)
             self.sections = [self.current, self.hourly, self.forecast]
-            self.place = forecastResult.location.name
+            self.place = try await forecastResult.location.name
             DispatchQueue.main.async {
                 self.collectionView.reloadData()
                 self.activityIndicator.stopAnimating()
             }
             
-            saveDataToStorage(current: currentResult, forecast: forecastResult)
+            await saveDataToStorage(current: try currentResult, forecast: try forecastResult)
         } catch {
-            print(error.localizedDescription)
             self.activityIndicator.stopAnimating()
+            self.showErrorMessage()
+            
         }
+    }
+    
+    func showErrorMessage(){
+        let alert = UIAlertController(title: "Error", message: "There was a problem loading the feed, please check your connection and try again.", preferredStyle: .alert)
+        
+        let tryAgainAction = UIAlertAction(title: "Try Again", style: .default) {  _ in
+            Task {
+                await self.fetchForecastResult()
+            }
+        }
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        
+        alert.addAction(tryAgainAction)
+        alert.addAction(cancelAction)
+        
+        self.present(alert, animated: true, completion: nil)
     }
     
     func saveDataToStorage(current: CurrentResult, forecast: ForecastResult) {

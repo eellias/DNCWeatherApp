@@ -99,12 +99,17 @@ class APIService {
             decoder.dateDecodingStrategy = .secondsSince1970
             decoder.keyDecodingStrategy = keyDecodingStrategy
             
-            do {
-                let decodedData = try decoder.decode(T.self, from: apiRequest.data!)
-                return decodedData
-            } catch {
-                throw APIError.decodingError(error.localizedDescription)
+            if let data = apiRequest.data {
+                do {
+                    let decodedData = try decoder.decode(T.self, from: data)
+                    return decodedData
+                } catch {
+                    throw APIError.decodingError(error.localizedDescription)
+                }
+            } else {
+                throw APIError.decodingError("No data received from the API")
             }
+            
         } catch {
             throw APIError.dataTaskError(error.localizedDescription)
         }
