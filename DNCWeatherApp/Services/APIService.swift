@@ -94,7 +94,7 @@ class APIService {
             switch response.result {
             case .success(let data):
                 let decoder = JSONDecoder()
-                decoder.dateDecodingStrategy = dateDecodingStrategy
+                decoder.dateDecodingStrategy = .secondsSince1970
                 decoder.keyDecodingStrategy = keyDecodingStrategy
                 do {
                     let decodedData = try decoder.decode(T.self, from: data)

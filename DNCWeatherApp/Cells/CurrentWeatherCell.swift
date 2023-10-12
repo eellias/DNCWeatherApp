@@ -15,26 +15,29 @@ class CurrentWeatherCell: UICollectionViewCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .systemFont(ofSize: 45, weight: .bold)
+        label.textColor = .white
+        
         return label
     }()
     
     private let weatherDegreesView: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .systemFont(ofSize: 70, weight: .bold)
+        label.font = .systemFont(ofSize: 90, weight: .regular)
+        label.textColor = .white
         return label
     }()
     
     private let weatherConditionView: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .systemFont(ofSize: 25, weight: .bold)
+        label.font = .systemFont(ofSize: 25, weight: .semibold)
+        label.textColor = .white
         return label
     }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = UIColor(white: 1.0, alpha: 0.6)
         setupView()
         setConstraints()
     }
@@ -53,13 +56,13 @@ class CurrentWeatherCell: UICollectionViewCell {
     
     func configure(with current: CurrentLocation) {
         weatherPlaceView.text = current.location.name
-        weatherDegreesView.text = String(current.current.tempC) + "°"
+        weatherDegreesView.text = String(format: "%.0f", current.current.tempC.rounded()) + "°"
         weatherConditionView.text = current.current.condition.text
     }
     
     func setConstraints() {
         NSLayoutConstraint.activate([
-            weatherPlaceView.topAnchor.constraint(equalTo: topAnchor, constant: 25),
+            weatherPlaceView.topAnchor.constraint(equalTo: topAnchor, constant: 50),
             weatherPlaceView.centerXAnchor.constraint(equalTo: centerXAnchor)
         ])
         

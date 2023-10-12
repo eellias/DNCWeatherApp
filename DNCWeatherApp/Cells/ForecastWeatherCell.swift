@@ -15,7 +15,8 @@ class ForecastWeatherCell: UICollectionViewCell {
     private let weatherDayView: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .systemFont(ofSize: 20, weight: .bold)
+        label.font = .systemFont(ofSize: 20, weight: .semibold)
+        label.textColor = .white
         return label
     }()
     
@@ -30,14 +31,16 @@ class ForecastWeatherCell: UICollectionViewCell {
     private let weatherMinTempView: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .systemFont(ofSize: 20, weight: .bold)
+        label.font = .systemFont(ofSize: 20, weight: .semibold)
+        label.textColor = .white
         return label
     }()
     
     private let weatherMaxTempView: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .systemFont(ofSize: 20, weight: .bold)
+        label.font = .systemFont(ofSize: 20, weight: .semibold)
+        label.textColor = .white
         return label
     }()
     
@@ -52,8 +55,6 @@ class ForecastWeatherCell: UICollectionViewCell {
     }
     
     func setupView() {
-        backgroundColor = UIColor(white: 1.0, alpha: 0.6)
-        layer.cornerRadius = 10
         addSubview(weatherDayView)
         addSubview(weatherImageView)
         addSubview(weatherMinTempView)
@@ -62,12 +63,11 @@ class ForecastWeatherCell: UICollectionViewCell {
     
     func configure(with model: Forecastday) {
         guard let url = URL(string: "http:" + model.day.condition.icon) else { return }
-        // TODO: - Change date format
         
-        weatherDayView.text = String(model.date)
+        weatherDayView.text = String(model.dateEpoch.dayOfWeek())
         weatherImageView.sd_setImage(with: url, completed: nil)
-        weatherMinTempView.text = String(model.day.mintempC) + "°"
-        weatherMaxTempView.text = String(model.day.maxtempC) + "°"
+        weatherMinTempView.text = String(format: "%.0f", model.day.mintempC.rounded()) + "°"
+        weatherMaxTempView.text = String(format: "%.0f", model.day.maxtempC.rounded()) + "°"
     }
     
     func setConstraints() {

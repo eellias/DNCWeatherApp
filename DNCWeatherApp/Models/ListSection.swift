@@ -7,11 +7,6 @@
 
 import Foundation
 
-struct CurrentLocation {
-    let current: Current
-    let location: Location
-}
-
 enum ListSection{
     case current(CurrentLocation)
     case hourly([Hour])

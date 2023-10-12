@@ -16,6 +16,7 @@ class HourlyWeatherCell: UICollectionViewCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .systemFont(ofSize: 15, weight: .bold)
+        label.textColor = .white
         return label
     }()
     
@@ -31,6 +32,7 @@ class HourlyWeatherCell: UICollectionViewCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .systemFont(ofSize: 15, weight: .bold)
+        label.textColor = .white
         return label
     }()
     
@@ -45,8 +47,6 @@ class HourlyWeatherCell: UICollectionViewCell {
     }
     
     func setupView() {
-        layer.cornerRadius = 10
-        backgroundColor = UIColor(white: 1.0, alpha: 0.6)
         addSubview(weatherTimeView)
         addSubview(weatherImageView)
         addSubview(weatherTempView)
@@ -55,15 +55,15 @@ class HourlyWeatherCell: UICollectionViewCell {
     func configure(with model: Hour) {
         guard let url = URL(string: "http:" + model.condition.icon) else { return }
         
-        weatherTimeView.text = model.time
+        weatherTimeView.text = model.timeEpoch.hours()
         weatherImageView.sd_setImage(with: url, completed: nil)
-        weatherTempView.text = String(model.tempC) + "°"
+        weatherTempView.text = String(format: "%.0f", model.tempC.rounded()) + "°"
     }
     
     func setConstraints() {
         NSLayoutConstraint.activate([
-            weatherTimeView.topAnchor.constraint(equalTo: topAnchor, constant: 5),
-            weatherTempView.centerXAnchor.constraint(equalTo: centerXAnchor)
+            weatherTimeView.topAnchor.constraint(equalTo: topAnchor, constant: 10),
+            weatherTimeView.centerXAnchor.constraint(equalTo: centerXAnchor)
         ])
         
         NSLayoutConstraint.activate([

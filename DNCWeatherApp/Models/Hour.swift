@@ -8,6 +8,7 @@
 import Foundation
 
 struct Hour: Codable {
+    let timeEpoch: Date
     let time: String
     let tempC: Double
     let tempF: Double
@@ -16,6 +17,7 @@ struct Hour: Codable {
     let chanceOfRain: Int
 
     enum CodingKeys: String, CodingKey {
+        case timeEpoch = "time_epoch"
         case time
         case tempC = "temp_c"
         case tempF = "temp_f"

@@ -28,5 +28,6 @@ extension WeatherViewController: CLLocationManagerDelegate {
         
         lon = String(currentLocation.coordinate.longitude)
         lat = String(currentLocation.coordinate.latitude)
+        fetchForecastResult()
     }
 }

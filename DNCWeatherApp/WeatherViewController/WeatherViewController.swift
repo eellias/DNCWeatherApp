@@ -35,7 +35,7 @@ class WeatherViewController: UIViewController {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.backgroundColor = .systemBlue
-        collectionView.bounces = false
+        collectionView.showsVerticalScrollIndicator = false
         return collectionView
     }()
     
@@ -43,7 +43,7 @@ class WeatherViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        fetchForecastResult()
+        setupLocation()
         setupViews()
         setConstraints()
         setDelegate()
@@ -69,7 +69,7 @@ class WeatherViewController: UIViewController {
         
         // TODO: [weak self]
         
-        apiService.getJSON(urlString: "http://api.weatherapi.com/v1/forecast.json?q=Kharkiv&days=3") { (result: Result<ForecastResult, APIError>) in
+        apiService.getJSON(urlString: "http://api.weatherapi.com/v1/forecast.json?q=\(lat),\(lon)&days=14") { (result: Result<ForecastResult, APIError>) in
             switch result {
             case .success(let forecastResult):
                 DispatchQueue.main.async {
@@ -99,13 +99,14 @@ class WeatherViewController: UIViewController {
         collectionView.register(HeaderSupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HeaderSupplementaryView.identifier)
         
         collectionView.collectionViewLayout = createLayout()
+        collectionView.collectionViewLayout.register(RoundedBackgroundView.self, forDecorationViewOfKind: RoundedBackgroundView.identifier)
     }
     
     private func setConstraints() {
         NSLayoutConstraint.activate([
             collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 0),
-            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
-            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0)
         ])
     }
@@ -169,7 +170,7 @@ extension WeatherViewController {
     }
     
     private func createHourlySection() -> NSCollectionLayoutSection {
-        let item = NSCollectionLayoutItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .estimated(90)))
+        let item = NSCollectionLayoutItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .estimated(140)))
         
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: .init(widthDimension: .fractionalWidth(0.15), heightDimension: .fractionalHeight(0.1)), subitems: [item])
         
@@ -177,18 +178,22 @@ extension WeatherViewController {
                                           behavior: .continuous,
                                           interGroupSpacing: 0,
                                           supplementaryItems: [])
-        section.contentInsets = .init(top: 0, leading: 10, bottom: 10, trailing: 10)
+        section.contentInsets = .init(top: 0, leading: 0, bottom: 35, trailing: 0)
+        section.decorationItems = [NSCollectionLayoutDecorationItem.background(elementKind: RoundedBackgroundView.identifier)]
+        
         return section
     }
     
     private func createForecastSection() -> NSCollectionLayoutSection {
         let item = NSCollectionLayoutItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .estimated(50)))
         
+        
         let group = NSCollectionLayoutGroup.vertical(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .estimated(1)), subitems: [item])
         
         let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = .init(top: 5, leading: 10, bottom: 0, trailing: 10)
+        section.contentInsets = .init(top: 5, leading: 0, bottom: 10, trailing: 0)
         section.boundarySupplementaryItems = [supplementaryHeaderItem()]
+        section.decorationItems = [NSCollectionLayoutDecorationItem.background(elementKind: RoundedBackgroundView.identifier)]
         return section
     }
     
@@ -247,4 +252,5 @@ extension WeatherViewController: UICollectionViewDelegate, UICollectionViewDataS
             return UICollectionReusableView()
         }
     }
+    
 }

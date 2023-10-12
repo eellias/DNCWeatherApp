@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		690F17DA2AD5A8A500A2FDA8 /* ListSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 690F17D92AD5A8A500A2FDA8 /* ListSection.swift */; };
 		690F17DD2AD5B19E00A2FDA8 /* CurrentWeatherCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 690F17DC2AD5B19E00A2FDA8 /* CurrentWeatherCell.swift */; };
+		695C68952AD7FA6E00BD517E /* RoundedBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 695C68942AD7FA6E00BD517E /* RoundedBackgroundView.swift */; };
+		695C68972AD80D3C00BD517E /* Date+Format.swift in Sources */ = {isa = PBXBuildFile; fileRef = 695C68962AD80D3C00BD517E /* Date+Format.swift */; };
+		695C689B2AD813EA00BD517E /* CurrentLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 695C689A2AD813EA00BD517E /* CurrentLocation.swift */; };
 		699347992ACF4F15009EBE1D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 699347982ACF4F15009EBE1D /* AppDelegate.swift */; };
 		6993479B2ACF4F15009EBE1D /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6993479A2ACF4F15009EBE1D /* SceneDelegate.swift */; };
 		6993479D2ACF4F15009EBE1D /* WeatherViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6993479C2ACF4F15009EBE1D /* WeatherViewController.swift */; };
@@ -38,6 +41,9 @@
 /* Begin PBXFileReference section */
 		690F17D92AD5A8A500A2FDA8 /* ListSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListSection.swift; sourceTree = "<group>"; };
 		690F17DC2AD5B19E00A2FDA8 /* CurrentWeatherCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentWeatherCell.swift; sourceTree = "<group>"; };
+		695C68942AD7FA6E00BD517E /* RoundedBackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedBackgroundView.swift; sourceTree = "<group>"; };
+		695C68962AD80D3C00BD517E /* Date+Format.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Format.swift"; sourceTree = "<group>"; };
+		695C689A2AD813EA00BD517E /* CurrentLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentLocation.swift; sourceTree = "<group>"; };
 		699347952ACF4F14009EBE1D /* DNCWeatherApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DNCWeatherApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		699347982ACF4F15009EBE1D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6993479A2ACF4F15009EBE1D /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -84,6 +90,7 @@
 				69CC4E752AD6D2B400185013 /* HourlyWeatherCell.swift */,
 				69CC4E7C2AD6D8C200185013 /* ForecastWeatherCell.swift */,
 				69CC4E7E2AD7328900185013 /* HeaderSupplementaryView.swift */,
+				695C68942AD7FA6E00BD517E /* RoundedBackgroundView.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -152,6 +159,8 @@
 				69E992CD2ACF52EB003A81CD /* Day.swift */,
 				69E992CF2ACF52FF003A81CD /* Hour.swift */,
 				690F17D92AD5A8A500A2FDA8 /* ListSection.swift */,
+				695C68962AD80D3C00BD517E /* Date+Format.swift */,
+				695C689A2AD813EA00BD517E /* CurrentLocation.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -242,6 +251,8 @@
 				69E992C82ACF52B4003A81CD /* Location.swift in Sources */,
 				69E992C02ACF5261003A81CD /* CurrentResult.swift in Sources */,
 				69E992CC2ACF52D8003A81CD /* Forecast.swift in Sources */,
+				695C689B2AD813EA00BD517E /* CurrentLocation.swift in Sources */,
+				695C68972AD80D3C00BD517E /* Date+Format.swift in Sources */,
 				69E992CA2ACF52C7003A81CD /* Forecastday.swift in Sources */,
 				69E992CE2ACF52EB003A81CD /* Day.swift in Sources */,
 				6993479D2ACF4F15009EBE1D /* WeatherViewController.swift in Sources */,
@@ -252,6 +263,7 @@
 				69E992BB2ACF5206003A81CD /* APIService.swift in Sources */,
 				690F17DD2AD5B19E00A2FDA8 /* CurrentWeatherCell.swift in Sources */,
 				69E992BE2ACF522F003A81CD /* APIError.swift in Sources */,
+				695C68952AD7FA6E00BD517E /* RoundedBackgroundView.swift in Sources */,
 				6993479B2ACF4F15009EBE1D /* SceneDelegate.swift in Sources */,
 				690F17DA2AD5A8A500A2FDA8 /* ListSection.swift in Sources */,
 				69F8A7762AD44C0100E79FF1 /* WeatherViewController+Location.swift in Sources */,
