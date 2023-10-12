@@ -38,10 +38,19 @@ class WeatherViewController: UIViewController {
         return collectionView
     }()
     
+    private let activityIndicator: UIActivityIndicatorView = {
+        let activityIndicator = UIActivityIndicatorView(style: .large)
+        activityIndicator.color = .white
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        return activityIndicator
+    }()
+    
     // MARK: - Lifecycle Functions
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        activityIndicator.startAnimating()
+        loadDataFromStorage()
         setupLocation()
         setupViews()
         setConstraints()
@@ -64,17 +73,56 @@ class WeatherViewController: UIViewController {
             self.place = forecastResult.location.name
             DispatchQueue.main.async {
                 self.collectionView.reloadData()
+                self.activityIndicator.stopAnimating()
             }
+            
+            saveDataToStorage(current: currentResult, forecast: forecastResult)
         } catch {
             print(error.localizedDescription)
+            self.activityIndicator.stopAnimating()
+        }
+    }
+    
+    func saveDataToStorage(current: CurrentResult, forecast: ForecastResult) {
+        if let currentData = try? JSONEncoder().encode(current),
+           let forecastData = try? JSONEncoder().encode(forecast) {
+            UserDefaults.standard.set(currentData, forKey: "currentData")
+            UserDefaults.standard.set(forecastData, forKey: "forecastData")
+        }
+    }
+    
+    func loadDataFromStorage() {
+        if let previousCurrentData = UserDefaults.standard.data(forKey: "currentData"),
+           let previousForecastData = UserDefaults.standard.data(forKey: "forecastData") {
+            let currentResult = try? JSONDecoder().decode(CurrentResult.self, from: previousCurrentData)
+            let forecastResult = try? JSONDecoder().decode(ForecastResult.self, from: previousForecastData)
+            
+            let currentLocation = CurrentLocation(current: currentResult!.current, location: currentResult!.location)
+            self.current = .current(currentLocation)
+            self.hourly = .hourly(forecastResult!.forecast.forecastday[0].hour)
+            self.forecast = .forecast(forecastResult!.forecast.forecastday)
+            self.sections = [self.current, self.hourly, self.forecast]
+            self.place = forecastResult!.location.name
+            DispatchQueue.main.async {
+                self.collectionView.reloadData()
+            }
+            
         }
     }
     
     // MARK: - Setting functions
     
+    private func setupActivityIndicator() {
+        collectionView.addSubview(activityIndicator)
+        NSLayoutConstraint.activate([
+            activityIndicator.centerXAnchor.constraint(equalTo: collectionView.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: collectionView.centerYAnchor)
+        ])
+    }
+    
     private func setupViews() {
         view.backgroundColor = .systemBlue
-        title = "Weather"
+        setupActivityIndicator()
         view.addSubview(collectionView)
         collectionView.register(CurrentWeatherCell.self, forCellWithReuseIdentifier: CurrentWeatherCell.identifier)
         collectionView.register(HourlyWeatherCell.self, forCellWithReuseIdentifier: HourlyWeatherCell.identifier)
