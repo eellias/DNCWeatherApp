@@ -11,7 +11,6 @@ import CoreLocation
 class WeatherViewController: UIViewController {
     
     // MARK: - Properties
-    var currentResult: CurrentResult?
     
     private var current: ListSection?
     private var hourly: ListSection?
@@ -51,39 +50,23 @@ class WeatherViewController: UIViewController {
     
     // MARK: - Fetching functions
 
-    func fetchCurrentResult() {
+    @MainActor
+    func fetchForecastResult() async {
         
-        apiService.getJSON(urlString: "http://api.weatherapi.com/v1/current.json?q=\(lat),\(lon)") { (result: Result<CurrentResult, APIError>) in
-            switch result {
-            case .success(let currentResult):
-                DispatchQueue.main.async {
-                    self.currentResult = currentResult
-                }
-            case .failure(let error):
-                print(error.localizedDescription)
+        do {
+            let forecastResult: ForecastResult = try await apiService.getJSON(urlString: "http://api.weatherapi.com/v1/forecast.json?q=\(lat),\(lon)&days=14")
+            let currentResult: CurrentResult = try await apiService.getJSON(urlString: "http://api.weatherapi.com/v1/current.json?q=\(lat),\(lon)")
+            let currentLocation = CurrentLocation(current: currentResult.current, location: currentResult.location)
+            self.current = .current(currentLocation)
+            self.hourly = .hourly(forecastResult.forecast.forecastday[0].hour)
+            self.forecast = .forecast(forecastResult.forecast.forecastday)
+            self.sections = [self.current, self.hourly, self.forecast]
+            self.place = forecastResult.location.name
+            DispatchQueue.main.async {
+                self.collectionView.reloadData()
             }
-        }
-    }
-    
-    func fetchForecastResult() {
-        
-        // TODO: [weak self]
-        
-        apiService.getJSON(urlString: "http://api.weatherapi.com/v1/forecast.json?q=\(lat),\(lon)&days=14") { (result: Result<ForecastResult, APIError>) in
-            switch result {
-            case .success(let forecastResult):
-                DispatchQueue.main.async {
-                    let currentLocation = CurrentLocation(current: forecastResult.current, location: forecastResult.location)
-                    self.current = .current(currentLocation)
-                    self.hourly = .hourly(forecastResult.forecast.forecastday[0].hour)
-                    self.forecast = .forecast(forecastResult.forecast.forecastday)
-                    self.sections = [self.current, self.hourly, self.forecast]
-                    self.place = forecastResult.location.name
-                    self.collectionView.reloadData()
-                }
-            case .failure(let error):
-                print(error.localizedDescription)
-            }
+        } catch {
+            print(error.localizedDescription)
         }
     }
     

@@ -83,28 +83,30 @@ class APIService {
     
     func getJSON<T: Decodable>(urlString: String,
                                dateDecodingStrategy: JSONDecoder.DateDecodingStrategy = .deferredToDate,
-                               keyDecodingStrategy: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys,
-                               completion: @escaping (Result<T, APIError>) -> Void) {
+                               keyDecodingStrategy: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys) async throws -> T {
         guard let url = URL(string: getURL(urlString)) else {
-            completion(.failure(.invalidURL))
-            return
+            throw APIError.invalidURL
         }
         
-        AF.request(url).validate(statusCode: 200..<300).responseData { response in
-            switch response.result {
-            case .success(let data):
-                let decoder = JSONDecoder()
-                decoder.dateDecodingStrategy = .secondsSince1970
-                decoder.keyDecodingStrategy = keyDecodingStrategy
-                do {
-                    let decodedData = try decoder.decode(T.self, from: data)
-                    completion(.success(decodedData))
-                } catch {
-                    completion(.failure(.decodingError(error.localizedDescription)))
+        do {
+            let apiRequest = try await withUnsafeThrowingContinuation { continuation in
+                AF.request(url).validate(statusCode: 200..<300).responseData { response in
+                    continuation.resume(returning: response)
                 }
-            case .failure(let error):
-                completion(.failure(.dataTaskError(error.localizedDescription)))
             }
+            
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .secondsSince1970
+            decoder.keyDecodingStrategy = keyDecodingStrategy
+            
+            do {
+                let decodedData = try decoder.decode(T.self, from: apiRequest.data!)
+                return decodedData
+            } catch {
+                throw APIError.decodingError(error.localizedDescription)
+            }
+        } catch {
+            throw APIError.dataTaskError(error.localizedDescription)
         }
     }
 }
