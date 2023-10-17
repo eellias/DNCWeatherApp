@@ -51,6 +51,8 @@ class APIService {
                let apiKey = String(data: apiKeyData, encoding: .utf8) {
                 return apiKey
             }
+        } else {
+            print("API key reading error: \(status)")
         }
 
         return nil

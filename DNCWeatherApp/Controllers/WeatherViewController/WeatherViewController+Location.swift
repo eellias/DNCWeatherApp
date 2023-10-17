@@ -26,8 +26,12 @@ extension WeatherViewController: CLLocationManagerDelegate {
     func requestWeatherForLocation() {
         guard let currentLocation = currentLocation else { return }
         
-        lon = String(currentLocation.coordinate.longitude)
-        lat = String(currentLocation.coordinate.latitude)
+        if !isLocationSetFromSearch {
+            lon = String(currentLocation.coordinate.longitude)
+            lat = String(currentLocation.coordinate.latitude)
+        }
+        
+        
         Task {
             await fetchForecastResult()
         }
