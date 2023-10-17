@@ -55,7 +55,7 @@ class CurrentWeatherCell: UICollectionViewCell {
     }
     
     func configure(with current: CurrentLocation) {
-        weatherPlaceView.text = current.location.name
+        weatherPlaceView.text = NSLocalizedString(current.location.name, comment: "Name of the place")
         weatherDegreesView.text = String(format: "%.0f", current.current.tempC.rounded()) + "°"
         weatherConditionView.text = current.current.condition.text
     }

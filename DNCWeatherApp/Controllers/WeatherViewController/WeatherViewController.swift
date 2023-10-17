@@ -26,6 +26,7 @@ class WeatherViewController: UIViewController {
     
     var place: String = ""
     
+    var isLocationSetFromSearch: Bool = false
     var lat: String = ""
     var lon: String = ""
     
@@ -48,7 +49,7 @@ class WeatherViewController: UIViewController {
     // MARK: - Lifecycle Functions
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        navigationController?.setNavigationBarHidden(true, animated: false)
         activityIndicator.startAnimating()
         loadDataFromStorage()
         setupLocation()
@@ -59,7 +60,6 @@ class WeatherViewController: UIViewController {
     
     // MARK: - Fetching functions
 
-    @MainActor
     func fetchForecastResult() async {
         
         do {

@@ -64,7 +64,7 @@ class ForecastWeatherCell: UICollectionViewCell {
     func configure(with model: Forecastday) {
         guard let url = URL(string: "http:" + model.day.condition.icon) else { return }
         
-        weatherDayView.text = String(model.dateEpoch.dayOfWeek())
+        weatherDayView.text = NSLocalizedString(String(model.dateEpoch.dayOfWeek()), comment: "Day of the week")
         weatherImageView.sd_setImage(with: url, completed: nil)
         weatherMinTempView.text = String(format: "%.0f", model.day.mintempC.rounded()) + "°"
         weatherMaxTempView.text = String(format: "%.0f", model.day.maxtempC.rounded()) + "°"
